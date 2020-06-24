@@ -1,0 +1,1 @@
+create index IX_26EC77BE on FOO_Assignment (groupId);
