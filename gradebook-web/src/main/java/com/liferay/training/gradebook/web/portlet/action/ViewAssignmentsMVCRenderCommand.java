@@ -15,6 +15,7 @@ import com.liferay.training.gradebook.service.AssignmentService;
 import com.liferay.training.gradebook.web.constants.GradebookPortletKeys;
 import com.liferay.training.gradebook.web.constants.MVCCommandNames;
 import com.liferay.training.gradebook.web.display.context.AssignmentsManagementToolbarDisplayContext;
+import com.liferay.training.gradebook.web.internal.security.permission.resource.AssignmentPermission;
 
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class ViewAssignmentsMVCRenderCommand implements MVCRenderCommand {
 		// Add Clay management toolbar related attributes.
 
 		addManagementToolbarAttributes(renderRequest, renderResponse);
+		
+		renderRequest.setAttribute("assignmentPermission", _assignmentPermission);
 
 		return "/view.jsp";
 	}
@@ -124,4 +127,7 @@ public class ViewAssignmentsMVCRenderCommand implements MVCRenderCommand {
 
 	@Reference
 	private Portal _portal;
+	
+	@Reference
+	protected AssignmentPermission _assignmentPermission;
 }

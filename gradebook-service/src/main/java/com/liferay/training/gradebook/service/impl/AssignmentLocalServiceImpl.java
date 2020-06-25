@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.gradebook.model.Assignment;
@@ -121,6 +122,10 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		         assignment.getAssignmentId(), portletActions, addGroupPermissions,
 		         addGuestPermissions);
 
+		     // Update asset resources.
+
+		     updateAsset(assignment, serviceContext);
+		     
 		     return assignment;
 		 }
 
@@ -143,6 +148,10 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		assignment.setDescriptionMap(descriptionMap);
 
 		assignment = super.updateAssignment(assignment);
+		
+		// Update Asset resources.
+
+	    updateAsset(assignment, serviceContext);
 
 		return assignment;
 	}
@@ -155,10 +164,33 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		     resourceLocalService.deleteResource(
 		         assignment, ResourceConstants.SCOPE_INDIVIDUAL);
 
+		     // Delete the Asset resource.
+
+		     assetEntryLocalService.deleteEntry(
+		         Assignment.class.getName(), assignment.getAssignmentId());
+		     
 		     // Delete the Assignment
 
 		     return super.deleteAssignment(assignment);
 		 }
+	
+	private void updateAsset(
+		     Assignment assignment, ServiceContext serviceContext)
+		     throws PortalException {
+
+		     assetEntryLocalService.updateEntry(
+		         serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+		         assignment.getCreateDate(), assignment.getModifiedDate(),
+		         Assignment.class.getName(), assignment.getAssignmentId(),
+		         assignment.getUuid(), 0, serviceContext.getAssetCategoryIds(),
+		         serviceContext.getAssetTagNames(), true, true,
+		         assignment.getCreateDate(), null, null, null,
+		         ContentTypes.TEXT_HTML,
+		         assignment.getTitle(serviceContext.getLocale()),
+		         assignment.getDescription(serviceContext.getLocale()), null, null, null, 0, 0,
+		         serviceContext.getAssetPriority());
+		 }
+
 
 	public List<Assignment> getAssignmentsByGroupId(long groupId) {
 
