@@ -1,4 +1,10 @@
-<%@ include file="/init.jsp"%>
+<%@ include file="../init.jsp"%>
+
+<liferay-ui:error key="serviceErrorDetails">
+     <liferay-ui:message key="error.assignment-service-error" arguments='<%= SessionErrors.get(liferayPortletRequest, "serviceErrorDetails") %>' />
+ </liferay-ui:error>
+ <liferay-ui:error key="assignmentTitleEmpty" message="error.assignment-title-empty" />
+ <liferay-ui:error key="assignmentDescriptionEmpty" message="error.assignment-description-empty" />
 
  <%-- Generate add / edit action URL and set title. --%>
 
@@ -36,6 +42,17 @@
                  <%-- Title field. --%>
 
                  <aui:input name="title">
+                 
+                 	<aui:validator name="required" />
+
+					 <aui:validator errorMessage="error.assignment-title-format" name="custom">
+					     function(val, fieldNode, ruleValue) {
+					         var wordExpression = 
+					             new RegExp("^[^\\[\\]\\^$<>]*$");
+					
+					         return wordExpression.test(val);
+					     }
+					 </aui:validator>
 
                  </aui:input>
 
